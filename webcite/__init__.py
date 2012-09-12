@@ -4,7 +4,7 @@ import threading
 from webcite import irc
 from webcite import errors
 from webcite import db
-from webcite import bot
+#from webcite import bot
 
 class IRCThread(threading.Thread):
     def __init__(self):
