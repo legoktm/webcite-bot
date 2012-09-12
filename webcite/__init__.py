@@ -19,5 +19,4 @@ def main():
     ircthread = IRCThread()
     ircthread.setDaemon(True)
     ircthread.start()
-    
-    
+    ircthread.join()
