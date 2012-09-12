@@ -28,17 +28,17 @@ class Database:
     def add_link(self, table, wikipage, url, author, oldid, **kwargs):
         timestamp = 'CURRENT_TIMESTAMP'
         if table in ['new_links', 'removed_links']:
-            data = (table, wikipage, url, author, timestamp, oldid)
+            data = (wikipage, url, author, timestamp, oldid)
         elif table == 'archived_links':
-            data = (table, wikipage, kwargs['archive_url'], url, author, timestamp, oldid)
+            data = (wikipage, kwargs['archive_url'], url, author, timestamp, oldid)
         elif table == 'processed_links':
-            data = (table, wikipage, kwargs['archive_url'], url, author, timestamp, oldid, kwargs['added_oldid'])
+            data = (wikipage, kwargs['archive_url'], url, author, timestamp, oldid, kwargs['added_oldid'])
         else:
             raise errors.NoTableError, table
-        values = '(' + ', '.join(['?' for i in range(0,len(data)-1)]) + ')'
+        values = '(' + ', '.join(['?' for i in range(0,len(data))]) + ')'
         print data
         with self.db.cursor() as cursor:
-            cursor.execute('INSERT INTO ? VALUES %s' % (values), data)
+            cursor.execute('INSERT INTO `%s` VALUES %s' % (table, values), data)
 
 class NewLinksThread(threading.Thread):
     
