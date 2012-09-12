@@ -106,7 +106,7 @@ class IRCBot:
         if oldid_key == (-1 + 6):
             oldid_key = text.find('?oldid=') + 7
         oldid = text[oldid_key:oldid_key+9]
-        user_key = text.find('[[en:User') + 9
+        user_key = text.find('[[en:User') + 10
         user_end_key = user_key + text[user_key:].find(']]')
         user = text[user_key:user_end_key]
         link_part = text[user_end_key:]
