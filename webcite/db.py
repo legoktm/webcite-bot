@@ -35,7 +35,7 @@ class Database:
             data = (table, wikipage, kwargs['archive_url'], url, author, timestamp, oldid, kwargs['added_oldid'])
         else:
             raise errors.NoTableError, table
-        values = '(' + ', '.join('?' for i in len(data)-1) + ')'
+        values = '(' + ', '.join(['?' for i in range(0,len(data)-1)]) + ')'
         print data
         with self.db.cursor() as cursor:
             cursor.execute('INSERT INTO ? VALUES %s' % (values), data)
