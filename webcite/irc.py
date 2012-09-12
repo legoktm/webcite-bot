@@ -121,6 +121,7 @@ class IRCBot:
         
         
         self.last_link ={'user':user, 'article_name':article_name, 'oldid':oldid, 'link':link}
+        print self.last_link
         db.NEWLINKSQUEUE.put(self.last_link)
     
     def send(self, msg):
@@ -159,7 +160,7 @@ class IRCBot:
                 line_data['authenticated'] = line_data['sender'] in self.owners
                 line_data['channel'] = line[2]
                 line_data['text'] = ' '.join(line[3:]).strip()               
-                print line_data
+                #print line_data
                 if line[1] in ["372", "376", "375"]:
                     self.welcomed = True
                     continue
