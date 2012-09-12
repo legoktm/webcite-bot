@@ -45,11 +45,13 @@ class NewLinksThread(threading.Thread):
     def __init__(self, queue):
         threading.Thread.__init__(self)
         self.queue = queue
+        self.Database = Database()
+        self.Database.connect()
     
     def parse(self, data):
         #data ={'user':user, 'article_name':article_name, 'oldid':oldid, 'link':link}
         table = 'new_links'
-        self.add_link(table, data['article_name'], data['link'], data['user'], data['oldid'])
+        self.Database.add_link(table, data['article_name'], data['link'], data['user'], data['oldid'])
     
     def run(self):
         while True:
