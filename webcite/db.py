@@ -58,6 +58,6 @@ class NewLinksThread(threading.Thread):
             self.queue.task_done()
 
 NEWLINKSQUEUE = Queue.Queue()
-NEWLINKSTHREAD = NewLinksThread()
+NEWLINKSTHREAD = NewLinksThread(NEWLINKSQUEUE)
 NEWLINKSTHREAD.setDaemon(True)
 NEWLINKSTHREAD.start()
