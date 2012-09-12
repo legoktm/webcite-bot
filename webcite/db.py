@@ -26,7 +26,7 @@ class Database:
                             )
 
     def add_link(self, table, wikipage, url, author, oldid, **kwargs):
-        timestamp = 'CURRENT_TIMESTAMP'
+        timestamp = None
         if table in ['new_links', 'removed_links']:
             data = (wikipage, url, author, timestamp, oldid)
         elif table == 'archived_links':
