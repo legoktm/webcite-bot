@@ -163,18 +163,18 @@ class IRCBot:
     def parse_line(self, line):
         line = string.rstrip(line)
         line = string.split(line)
+        if line[0] == "PING":
+            self.send("PONG %s" % line[0])
+            return
+        if line[1] in ["372", "376", "375"]:
+            self.welcomed = True
+            return
         line_data = {}
         line_data['sender'] = line[0][1:]
         line_data['authenticated'] = 'legoktm' in line_data['sender'].lower()
         line_data['channel'] = line[2]
         line_data['text'] = ' '.join(line[3:]).strip()               
         #print line_data
-        if line[1] in ["372", "376", "375"]:
-            self.welcomed = True
-            return
-        if line[0] == "PING":
-            self.send("PONG %s" % line[0])
-            return
         if self.welcomed and not self.joined:
             for channel in self.join_channels:
                 self.send("JOIN "+channel)
