@@ -157,7 +157,6 @@ class IRCBot:
                 except Exception, e:
                     print e
                     print line
-                    continue
                 
     def parse_line(self, line):
         line = string.rstrip(line)
