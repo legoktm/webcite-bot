@@ -169,20 +169,20 @@ class IRCBot:
         #print line_data
         if line[1] in ["372", "376", "375"]:
             self.welcomed = True
-            continue
+            return
         if line[0] == "PING":
             self.send("PONG %s" % line[0])
-            continue
+            return
         if self.welcomed and not self.joined:
             for channel in self.join_channels:
                 self.send("JOIN "+channel)
         if line_data['channel'] == '#wikipedia-en-spam':
             self.check_new_link(line_data)
-            continue
+            return
         if len(line) > 3:
             if line[3][1:].startswith('!'):
                 self.run_commands(line_data)
-                continue
+                return
                     
                 
     def quit(self, msg=None, user=None):
