@@ -39,6 +39,21 @@ class Database:
         print data
         with self.db.cursor() as cursor:
             cursor.execute('INSERT INTO `%s` VALUES %s' % (table, values), data)
+    
+    def fetch_ready_links(self):
+        with self.db.cursor() as cursor:
+            cursor.execute("SELECT * FROM `new_links` WHERE `timestamp` < (NOW() - INTERVAL 48 HOUR)")
+            rows = cursor.fetchall()
+        return rows
+    
+    def move_archived_links(self, orig_row, archive_url):
+        self.add_link('archived_links', orig_row[0], orig_row[1], orig_row[2], orig_row[4], archive_url = archive_url)
+        with self.db.cursor() as cursor:
+            cursor.execute("DELETE FROM `new_links` WHERE `wikipage` = ? AND `url` = ? AND `author` = ? AND `timestamp` = ? AND `oldid` = ?", orig_row)
+
+
+    
+
 
 class NewLinksThread(threading.Thread):
     
