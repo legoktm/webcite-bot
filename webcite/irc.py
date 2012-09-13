@@ -152,30 +152,38 @@ class IRCBot:
             temp = string.split(self.readbuffer, "\r\n")
             self.readbuffer = temp.pop()
             for line in temp:
-                line = string.rstrip(line)
-                line = string.split(line)
-                line_data = {}
-                line_data['sender'] = line[0][1:]
-                line_data['authenticated'] = 'legoktm' in line_data['sender'].lower()
-                line_data['channel'] = line[2]
-                line_data['text'] = ' '.join(line[3:]).strip()               
-                #print line_data
-                if line[1] in ["372", "376", "375"]:
-                    self.welcomed = True
+                try:
+                    self.parse_line(line)
+                except Exception, e:
+                    print e
+                    print line
                     continue
-                if line[0] == "PING":
-                    self.send("PONG %s" % line[0])
-                    continue
-                if self.welcomed and not self.joined:
-                    for channel in self.join_channels:
-                        self.send("JOIN "+channel)
-                if line_data['channel'] == '#wikipedia-en-spam':
-                    self.check_new_link(line_data)
-                    continue
-                if len(line) > 3:
-                    if line[3][1:].startswith('!'):
-                        self.run_commands(line_data)
-                        continue
+                
+    def parse_line(self, line):
+        line = string.rstrip(line)
+        line = string.split(line)
+        line_data = {}
+        line_data['sender'] = line[0][1:]
+        line_data['authenticated'] = 'legoktm' in line_data['sender'].lower()
+        line_data['channel'] = line[2]
+        line_data['text'] = ' '.join(line[3:]).strip()               
+        #print line_data
+        if line[1] in ["372", "376", "375"]:
+            self.welcomed = True
+            continue
+        if line[0] == "PING":
+            self.send("PONG %s" % line[0])
+            continue
+        if self.welcomed and not self.joined:
+            for channel in self.join_channels:
+                self.send("JOIN "+channel)
+        if line_data['channel'] == '#wikipedia-en-spam':
+            self.check_new_link(line_data)
+            continue
+        if len(line) > 3:
+            if line[3][1:].startswith('!'):
+                self.run_commands(line_data)
+                continue
                     
                 
     def quit(self, msg=None, user=None):
