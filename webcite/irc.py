@@ -22,7 +22,6 @@ class IRCBot:
         self.join_channels = ['##legoktm','#wikipedia-en-spam']
         self.write_channels = ['##legoktm', 'legoktm']
         self.error_channel = 'legoktm'
-        self.owners = ['legoktm!~legoktm@wikipedia/Legoktm']
         #COMMANDS
         self.commands = ['!status', '!isup', '!link', '!help', '!quit', '!list', '!last']
         self.owners = ['!quit']
@@ -157,7 +156,7 @@ class IRCBot:
                 line = string.split(line)
                 line_data = {}
                 line_data['sender'] = line[0][1:]
-                line_data['authenticated'] = line_data['sender'] in self.owners
+                line_data['authenticated'] = 'legoktm' in line_data['sender'].lower()
                 line_data['channel'] = line[2]
                 line_data['text'] = ' '.join(line[3:]).strip()               
                 #print line_data
@@ -186,6 +185,7 @@ class IRCBot:
             msg = 'Unknown error...quitting.'
         self.send('QUIT '+msg)
         self.connected = False
+        sys.exit(0)
 
 if __name__ == '__main__':
     bot = IRCBot()
