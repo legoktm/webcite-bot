@@ -23,16 +23,16 @@ class IRCBot:
         self.write_channels = ['##legoktm', 'legoktm']
         self.error_channel = 'legoktm'
         #COMMANDS
-        self.commands = ['!status', '!isup', '!link', '!help', '!quit', '!list', '!last']
+        self.commands = ['!status', '!link', '!help', '!quit', '!list', '!last']
         self.owners = ['!quit']
         self.helptext = {'!status':'Gives current status of the bot',
-                         '!isup':'Whether the bot is up.',
                          '!link':'Provides a link to wikipedia. Usage: !link [[User:Legobot]]',
                          '!help':'Provide help for a command. Usage: !help cmd',
                          '!quit':'Force the bot to disconnect from the server.',
                          '!list':'Give a list of commands.',
-                         '!last':'Display the info about the last link',
+                         '!last':'Display the info about the last link parsed from #wikipedia-en-spam',
         }
+        self.last_link = None
     
     def run_commands(self, line_data):
         if line_data['channel'] == 'Legobot':
@@ -69,13 +69,14 @@ class IRCBot:
             self.quit(msg=text, user=line_data['sender'])
             return
         if command == '!status':
-            self.send_to_channel('The IRC bot is currently running.', channel)
-            return
-        if command == '!isup':
-            self.send_to_channel('The cite-web bot is currently not running.', channel)
+            self.send_to_channel('IRC: up. Link harvester: up. Link archiver: down. On-wiki bot: down.', channel)
             return
         if command == '!last':
-            self.send_to_channel(self.last_link, channel)
+            if not self.last_link:
+                msg = 'I have not parsed a link from #wikipedia-en-spam yet.'
+            else:
+                msg = self.last_link
+            self.send_to_channel(msg, channel)
             return
         if command == '!link':
             if text.startswith('[[') and text.endswith(']]'):
@@ -91,6 +92,7 @@ class IRCBot:
         self.send_to_channel('Type !help cmd to get more info: %s' % (', '.join(self.commands)), channel)
     
     def check_new_link(self, line_data):
+        #TODO: Move this into a webcite.db queue class
         if not line_data['sender'].startswith('LiWa3'):
             #not a new link
             return
