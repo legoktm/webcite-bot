@@ -47,11 +47,15 @@ class Database:
             rows = cursor.fetchall()
         return rows
     
-    def move_archived_links(self, orig_row, archive_url):
-        self.add_link('archived_links', orig_row[0], orig_row[1], orig_row[2], orig_row[4], archive_url = archive_url)
+    def delete_from_new_links(self, orig_row, removed=False):
+        if removed:
+            self.add_link('removed_links', orig_row[1], orig_row[2], orig_row[3], orig_row[5])
         with self.db.cursor() as cursor:
-            cursor.execute("DELETE FROM `new_links` WHERE `wikipage` = ? AND `url` = ? AND `author` = ? AND `timestamp` = ? AND `oldid` = ?", orig_row)
+            cursor.execute("DELETE FROM `new_links` WHERE `id` = ?", (orig_row[0,]))
 
+    def move_archived_links(self, orig_row, archive_url):
+        self.add_link('archived_links', orig_row[1], orig_row[2], orig_row[3], orig_row[5], archive_url = archive_url)
+        self.delete_from_new_links(orig_row)
 
     
 
