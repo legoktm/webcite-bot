@@ -27,12 +27,13 @@ class Database:
 
     def add_link(self, table, wikipage, url, author, oldid, **kwargs):
         timestamp = None
+        id = None
         if table in ['new_links', 'removed_links']:
-            data = (wikipage, url, author, timestamp, oldid)
+            data = (id, wikipage, url, author, timestamp, oldid)
         elif table == 'archived_links':
-            data = (wikipage, kwargs['archive_url'], url, author, timestamp, oldid)
+            data = (id, wikipage, kwargs['archive_url'], url, author, timestamp, oldid)
         elif table == 'processed_links':
-            data = (wikipage, kwargs['archive_url'], url, author, timestamp, oldid, kwargs['added_oldid'])
+            data = (id, wikipage, kwargs['archive_url'], url, author, timestamp, oldid, kwargs['added_oldid'])
         else:
             raise errors.NoTableError, table
         values = '(' + ', '.join(['?' for i in range(0,len(data))]) + ')'
