@@ -119,6 +119,8 @@ class IRCBot:
                 return
         link_end = link_part.find(' (')
         link = link_part[link_start:link_end]
+        if link.endswith('\x03'):
+            link = link[:-1]
         
         
         self.last_link ={'user':user, 'article_name':article_name, 'oldid':oldid, 'link':link}
