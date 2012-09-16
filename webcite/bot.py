@@ -24,12 +24,12 @@ CITE_NEWS = ['cite news', 'cit news', 'cite article', 'citenewsauthor', 'cite ne
 CITE_TEMPLATES = CITE_WEB
 CITE_TEMPLATES.extend(CITE_NEWS)
 CITE_WEB_TEMPLATE = '{{cite web|url=%s|title=%s|archiveurl=%s|archivedate=%s|deadurl=no}}'
-URL_SAFETY = ['.','?','*']
 
 def calculate_date(delay=None):
     #format of 31 June 2012
     now = datetime.datetime.utcnow()
     return now.strftime('%d %B %Y')
+    
 
 def add_template(wikitext, url, archive_url):
     orig = unicode(wikitext)
