@@ -50,14 +50,26 @@ class Database:
     def delete_from_new_links(self, orig_row, removed=False):
         if removed:
             self.add_link('removed_links', orig_row[1], orig_row[2], orig_row[3], orig_row[5])
+        self.delete_from_table('new_links', orig_row)
+    def delete_from_table(self, table, orig_row):
         with self.db.cursor() as cursor:
-            cursor.execute("DELETE FROM `new_links` WHERE `id` = ?", (orig_row[0,]))
+            cursor.execute("DELETE FROM `%s` WHERE `id` = ?" % table, (orig_row[0],))
+
 
     def move_archived_links(self, orig_row, archive_url):
         self.add_link('archived_links', orig_row[1], orig_row[2], orig_row[3], orig_row[5], archive_url = archive_url)
         self.delete_from_new_links(orig_row)
-
     
+    def move_processed_links(self, orig_row, new_oldid):
+        self.add_link('processed_links', orig_row[1], orig_row[2], orig_row[3], orig_row[5], archive_url = archive_url, added_oldid=new_oldid)
+        self.delete_from_table('archived_links', orig_row)
+    
+    def fetch_archived_links(self):
+        with self.db.cursor() as cursor:
+            cursor.execute("SELECT * FROM `archived_links` LIMIT 10")
+            rows = cursor.fetchall()
+        return rows
+
 
 
 class NewLinksThread(threading.Thread):
