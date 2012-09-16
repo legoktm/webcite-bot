@@ -9,9 +9,9 @@ and analyzing data.
 """
 
 import requests
+from StringIO import StringIO
 from lxml import etree
 from BeautifulSoup import BeautifulSoup
-from StringIO import StringIO
 
 #from webcite import errors
 
