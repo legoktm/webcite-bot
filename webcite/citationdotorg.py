@@ -21,8 +21,6 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 """
 
-from __future__ import unicode_literals
-
 """
 Part of a webcitation.org bot
 This portion interacts with webcitation.org in querying
@@ -32,9 +30,9 @@ and analyzing data.
 import requests
 from StringIO import StringIO
 from lxml import etree
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
 
-#from webcite import errors
+from webcite import errors
 
 #global configuation settings
 WEBCITE_URL = 'http://www.webcitation.org/archive'
@@ -50,30 +48,29 @@ FIREFOX_HEADERS = {'Content-Length':'',
 BOT_HEADERS = FIREFOX_HEADERS
 BOT_HEADERS['User-Agent'] = 'Wikipedia LegoCITEBot - enwp.org/User:Legobot'
 def get_title(url):
-    r = requests.get(url, headers=FIREFOX_HEADERS)
+    r = requests.get(url, headers=FIREFOX_HEADERS) #sites may reject custom headers
     if r.status_code != 200:
         return None
     soup = BeautifulSoup(r.text)
-    title = soup.title.string  
+    title = soup.title.string.strip()
     title = title.replace('|', '{{!}}')
-    title = title.strip()
-    return title  
+    return title
 
 def archive_url(url):
     d = DEFAULT_PARAMETERS
     d['url'] = url
     r = requests.get(WEBCITE_URL, params=d, headers=BOT_HEADERS)
     if r.status_code != 200:
-        raise errors.ArchivingFailed, url
+        raise errors.ArchivingFailed(url)
     obj = StringIO(str(r.text))
     data = {}
     try:
         for event, element in etree.iterparse(obj):
             data[element.tag] = element.text
     except:
-        print r.text
+        print(r.text)
     return data
 
 if __name__ == "__main__":
     d=archive_url('en.wikipedia.org')
-    print d
+    print(d)

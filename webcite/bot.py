@@ -20,7 +20,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 """
-from __future__ import unicode_literals
 
 """
 Part of a webcitation.org bot
@@ -30,8 +29,8 @@ This portion interacts Wikipedia and updates articles.
 import time
 import datetime
 import re
-
-import pywikibot
+import ceterach
+#import pywikibot
 import mwparserfromhell
 
 #from webcite import citationdotorg
@@ -49,7 +48,8 @@ def calculate_date(delay=None):
     #format of 31 June 2012
     now = datetime.datetime.utcnow()
     return now.strftime('%d %B %Y')
-    
+
+
 
 def add_template(wikitext, url, archive_url):
     orig = unicode(wikitext)
@@ -66,8 +66,8 @@ def add_template(wikitext, url, archive_url):
             template.add('archivedate', calculate_date())
             template.add('deadurl', 'no')
             break
-    if unicode(orig) != unicode(wikitext):
-        return unicode(wikitext)
+    if str(orig) != str(wikitext):
+        return str(wikitext)
     #not in a cite web template :(
     
     #look for [url title]
@@ -75,7 +75,7 @@ def add_template(wikitext, url, archive_url):
     if match:
         cite = CITE_WEB_TEMPLATE % (
             url, match.group(1).strip(), archive_url, calculate_date())
-        wikitext = unicode(wikitext).replace(match.group(0), cite)
+        wikitext = str(wikitext).replace(match.group(0), cite)
         return wikitext
     #look for [url]
     find = '[%s]' % url
@@ -83,15 +83,15 @@ def add_template(wikitext, url, archive_url):
     if find in wikitext:
         cite = CITE_WEB_TEMPLATE % (
             url, title, archive_url, calculate_date())
-        wikitext = unicode(wikitext).replace(find, cite)
+        wikitext = str(wikitext).replace(find, cite)
         return wikitext
     #look for just url
     plain_regex = '\<ref(.*?)\>\w?\[?\w?%s\w?\]?\w?\</ref\>' % url
-    match = re.search(plain_regex, unicode(wikitext))
+    match = re.search(plain_regex, str(wikitext))
     if match:
         cite_t = CITE_WEB_TEMPLATE % (url, title, archive_url, calculate_date())
         cite = '<ref%s>%s</ref>' % (match.group(1), cite_t)
-        wikitext = re.sub(plain_regex, cite, unicode(wikitext))
+        wikitext = re.sub(plain_regex, cite, str(wikitext))
         return wikitext
     #un-successful in adding the cite
     return None
@@ -106,18 +106,18 @@ def modify_all_of_page(page):
         if not link.startswith(('http', 'ftp', 'https')):
             continue
         url = citationdotorg.archive_url(link)['webcite_url']
-        print url
+        print(url)
         text = add_template(text, link, url)
         if not text:
-            print 'ERROR'
+            print('ERROR')
         text = mwparserfromhell.parse(text)
         pywikibot.showDiff(orig, unicode(text))
         time.sleep(5)
-    print '-----------------------'
-    pywikibot.showDiff(orig, unicode(text))
-    page.put(unicode(text), 'bot: manual testing by op')
+    print('-----------------------')
+    pywikibot.showDiff(orig, str(text))
+    page.put(str(text), 'bot: manual testing by op')
 
 
 if __name__ == "__main__":
-    modify_all_of_page(pywikibot.Page(pywikibot.Site(), 'User:Legoktm/Sandbox'))
-    
+    #modify_all_of_page(pywikibot.Page(pywikibot.Site(), 'User:Legoktm/Sandbox'))
+    pass

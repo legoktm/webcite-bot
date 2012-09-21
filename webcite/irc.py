@@ -21,8 +21,6 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 """
 
-from __future__ import unicode_literals
-
 """
 Part of a webcitation.org bot
 This portion reads from #wikipedia-en-spam, and updates the database.
@@ -43,6 +41,7 @@ class IRCBot:
         self.join_channels = ['##legoktm','#wikipedia-en-spam']
         self.write_channels = ['##legoktm', 'legoktm']
         self.error_channel = 'legoktm'
+        self.operators = ['legoktm', 'SigmaWP', 'CoalBalls']
         #COMMANDS
         self.commands = ['!status', '!link', '!help', '!quit', '!list', '!last']
         self.owners = ['!quit']
@@ -145,7 +144,7 @@ class IRCBot:
         
         
         self.last_link ={'user':user, 'article_name':article_name, 'oldid':oldid, 'link':link}
-        print self.last_link
+        print(self.last_link)
         db.NEWLINKSQUEUE.put(self.last_link)
     
     def send(self, msg):
@@ -179,9 +178,9 @@ class IRCBot:
             for line in temp:
                 try:
                     self.parse_line(line)
-                except Exception, e:
-                    print e
-                    print line
+                except Exception as e:
+                    print(e)
+                    print(line)
                 
     def parse_line(self, line):
         line = string.rstrip(line)
@@ -194,7 +193,10 @@ class IRCBot:
             return
         line_data = {}
         line_data['sender'] = line[0][1:]
-        line_data['authenticated'] = 'legoktm' in line_data['sender'].lower()
+        line_data['authenticated'] = False
+        for owner in self.owners:
+            if owner in line_data['sender']:
+                line_data['authenticated'] = True
         line_data['channel'] = line[2]
         line_data['text'] = ' '.join(line[3:]).strip()               
         #print line_data

@@ -24,13 +24,19 @@ IN THE SOFTWARE.
 import threading
 import time
 
-import pywikibot
+import ceterach
+#import pywikibot
 
 from webcite import irc
 from webcite import errors
 from webcite import db
 from webcite import bot
 from webcite import citationdotorg
+
+
+api = ceterach.apir.MediaWiki("http://en.wikipedia.org/w/api.php")
+api.login("Lowercase sigmabot III", ceterach.passwords.lcsb3)
+
 
 class IRCThread(threading.Thread):
     def __init__(self):
@@ -41,12 +47,13 @@ class IRCThread(threading.Thread):
         self.ircbot.start()
 
 class ArchiveThread(threading.Thread):
-    def __init__(self):
+    def __init__(self, api):
         threading.Thread.__init__(self)
         self.Database = db.Database()
         self.Database.connect()
         self.time = 0
-        self.Site = pywikibot.Site()
+        #self.Site = pywikibot.Site()
+        self.api = api
     
     def archive_url(self, url):
         """Implements a 5 second time delay"""
@@ -57,16 +64,17 @@ class ArchiveThread(threading.Thread):
         return citationdotorg.archive_url(url)
     
     def url_in_article(self, article, url):
-        pg = pywikibot.Page(self.Site, article)
-        if not pg.exists():
+        #pg = pywikibot.Page(self.Site, article)
+        pg = self.api.page(article)
+        if not pg.exists:
             return False
-        while pg.isRedirectPage():
-            pg = pg.getRedirectTarget()
+        while pg.is_redirect:
+            pg = pg.redirect_target
         links = list(pg.extlinks())
         if url in links:
             return True
-        text = pg.get()
-        return url.lower().strip() in pg.lower()
+        text = pg.content
+        return url.lower().strip() in text.lower()
 
     
     def run(self):
@@ -85,31 +93,39 @@ class ArchiveThread(threading.Thread):
 
 class WikiBot(threading.Thread):
     
-    def __init__(self):
+    def __init__(self, api):
         threading.Thread.__init__(self)
         self.Database = db.Database()
-        self.Site = pywikibot.Site()
-        self.error_page = pywikibot.Page(self.Site, 'User:Legobot/WebCite Errors')
-    
+        #self.Site = pywikibot.Site()
+        #self.error_page = pywikibot.Page(self.Site, 'User:Legobot/WebCite Errors')
+        self.api = api
+        self.error_page = self.api.page("User:Lowercase sigmabot III/WebCite Errors")
+
+
     def report_error(self, article, url, archive_url):
-        if self.error_page.exists():
-            old = self.error_page.get()
+        if self.error_page.exists:
+            old = self.error_page.content
         else:
             old = ''
         new = '* [[:%s]] -- [%s Original], [%s Archive]. ~~~~~' % (article, url, archive_url)
         text = old + '\n' + new
-        self.error_page.put(text, 'BOT: Logging error')
+        self.error_page.edit(text, 'BOT: Logging error',minor=True,bot=True)
     
     def add_link(self, data):
         article = data[1]
         url = data[3]
         archive_url = data[2]
-        page = pywikibot.Page(self.site, article)
-        text = page.get()
+        #page = pywikibot.Page(self.site, article)
+        page = self.api.page(article)
+        text = page.content
         new_text = bot.add_template(text, url, archive_url)
         if new_text:
-            page.put(new_text, 'BOT: adding webcitation.org link to %s' % url)
-            new_oldid = page.latestRevision()
+            page.edit(new_text, 'BOT: adding webcitation.org link to %s' % url, minor=True, bot=True)
+            #TODO: Implement page.latest_revision
+            page.load() #force it to load new info
+            #new_oldid = page.latestRevision() #pywikibot
+            #new_oldid = page.latest_revision #ceterach
+            new_oldid = 00000
             self.Database.move_processed_links(data, new_oldid)
         else:
             self.report_error(article, url, archive_url)
@@ -127,12 +143,12 @@ def main():
     ircthread = IRCThread()
     ircthread.setDaemon(True)
     ircthread.start()
-    archivethread = ArchiveThread()
-    archivethread.setDaemon(True)
-    archivethread.start()
-    wikibotthread = WikiBot()
-    wikibotthread.setDaemon(True)
-    wikibotthread.start()
+    #archivethread = ArchiveThread(api)
+    #archivethread.setDaemon(True)
+    #archivethread.start()
+    #wikibotthread = WikiBot(api)
+    #wikibotthread.setDaemon(True)
+    #wikibotthread.start()
     ircthread.join()
-    archivethread.join()
-    wikibotthread.join()
+    #archivethread.join()
+    #wikibotthread.join()

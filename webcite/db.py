@@ -21,8 +21,6 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 """
 
-from __future__ import unicode_literals
-
 """
 Part of a webcitation.org bot
 This portion interacts with the database storing and reading links.
@@ -30,9 +28,11 @@ This portion interacts with the database storing and reading links.
 
 import os
 import threading
-import Queue
+import queue
 
-import oursql
+import pymysql
+pymysql.install_as_MySQLdb()
+import _mysql as oursql
 
 from webcite import errors
 
@@ -56,9 +56,9 @@ class Database:
         elif table == 'processed_links':
             data = (id, wikipage, kwargs['archive_url'], url, author, timestamp, oldid, kwargs['added_oldid'])
         else:
-            raise errors.NoTableError, table
+            raise errors.NoTableError(table)
         values = '(' + ', '.join(['?' for i in range(0,len(data))]) + ')'
-        print data
+        print(data)
         with self.db.cursor() as cursor:
             cursor.execute('INSERT INTO `%s` VALUES %s' % (table, values), data)
     
@@ -112,7 +112,7 @@ class NewLinksThread(threading.Thread):
             self.parse(data)
             self.queue.task_done()
 
-NEWLINKSQUEUE = Queue.Queue()
+NEWLINKSQUEUE = queue.Queue()
 NEWLINKSTHREAD = NewLinksThread(NEWLINKSQUEUE)
 NEWLINKSTHREAD.setDaemon(True)
 NEWLINKSTHREAD.start()
