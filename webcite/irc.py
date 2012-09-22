@@ -148,7 +148,8 @@ class IRCBot:
         db.NEWLINKSQUEUE.put(self.last_link)
     
     def send(self, msg):
-        self.s.send(msg+'\r\n')
+        line = msg+'\r\n'
+        self.s.send(line.encode())
     
     def send_to_channel(self, msg, channel):
         #if not (channel in self.write_channels):
@@ -170,7 +171,7 @@ class IRCBot:
         self.joined = False
         while self.connected:
             try:
-                self.readbuffer = self.readbuffer + self.s.recv(1024)
+                self.readbuffer = self.readbuffer + self.s.recv(1024).decode()
             except UnicodeDecodeError:
                 continue
             temp = string.split(self.readbuffer, "\r\n")
