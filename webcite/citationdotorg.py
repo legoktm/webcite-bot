@@ -28,7 +28,7 @@ and analyzing data.
 """
 
 import requests
-from StringIO import StringIO
+from io import StringIO
 from lxml import etree
 from bs4 import BeautifulSoup
 
