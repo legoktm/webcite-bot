@@ -155,7 +155,7 @@ class IRCBot:
         #    self.send_to_channel('Unable to send the following message to: '+channel, self.error_channel)
         #    self.send_to_channel(msg, self.error_channel)
         #    return
-        self.send("PRIVMSG %s :%s" % (channel, unicode(msg)))
+        self.send("PRIVMSG %s :%s" % (channel, str(msg)))
     
     def connect(self):
         self.s = socket.socket()
