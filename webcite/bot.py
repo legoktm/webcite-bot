@@ -33,8 +33,7 @@ import ceterach
 #import pywikibot
 import mwparserfromhell
 
-#from webcite import citationdotorg
-import citationdotorg
+from webcite import citationdotorg
 CITE_WEB = ['cite web', 'web', 'web reference', 'web-reference', 'weblink', 'c web', 'cit web', 'cita web', 'citar web', 'cite blog', 'cite tweet',
             'cite url,', 'cite web.', 'cite webpage', 'cite website', 'cite website article', 'cite-web', 'citeweb', 'cw', 'lien web',
             'web citation', 'web cite',]
