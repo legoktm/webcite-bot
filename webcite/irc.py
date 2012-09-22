@@ -28,7 +28,6 @@ This portion reads from #wikipedia-en-spam, and updates the database.
 
 import sys
 import socket
-import string
 
 from webcite import db
             
@@ -174,7 +173,7 @@ class IRCBot:
                 self.readbuffer = self.readbuffer + self.s.recv(1024).decode()
             except UnicodeDecodeError:
                 continue
-            temp = string.split(self.readbuffer, "\r\n")
+            temp = self.readbuffer.split("\r\n")
             self.readbuffer = temp.pop()
             for line in temp:
                 try:
@@ -184,8 +183,8 @@ class IRCBot:
                     print(line)
                 
     def parse_line(self, line):
-        line = string.rstrip(line)
-        line = string.split(line)
+        line = line.rstrip()
+        line = line.split(" ")
         if line[0] == "PING":
             self.send("PONG %s" % line[0])
             return
