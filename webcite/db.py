@@ -54,13 +54,16 @@ class Database:
             raise errors.NoTableError(table)
         values = '(' + ', '.join(['?' for i in range(0,len(data))]) + ')'
         print(data)
-        with self.db.cursor() as cursor:
-            cursor.execute('INSERT INTO `%s` VALUES %s' % (table, values), data)
+        cursor = self.db.cursor()
+        cursor.execute('INSERT INTO `%s` VALUES %s' % (table, values), data)
+        cursor.commit()
+        cursor.close()
     
     def fetch_ready_links(self):
-        with self.db.cursor() as cursor:
-            cursor.execute("SELECT * FROM `new_links` WHERE `timestamp` < (NOW() - INTERVAL 48 HOUR)")
-            rows = cursor.fetchall()
+        cursor = self.db.cursor()
+        cursor.execute("SELECT * FROM `new_links` WHERE `timestamp` < (NOW() - INTERVAL 48 HOUR)")
+        rows = cursor.fetchall()
+        cursor.close()
         return rows
     
     def delete_from_new_links(self, orig_row, removed=False):
@@ -68,8 +71,10 @@ class Database:
             self.add_link('removed_links', orig_row[1], orig_row[2], orig_row[3], orig_row[5])
         self.delete_from_table('new_links', orig_row)
     def delete_from_table(self, table, orig_row):
-        with self.db.cursor() as cursor:
-            cursor.execute("DELETE FROM `%s` WHERE `id` = ?" % table, (orig_row[0],))
+        cursor = self.db.cursor()
+        cursor.execute("DELETE FROM `%s` WHERE `id` = ?" % table, (orig_row[0],))
+        cursor.commit()
+        cursor.close()
 
 
     def move_archived_links(self, orig_row, archive_url):
@@ -81,9 +86,10 @@ class Database:
         self.delete_from_table('archived_links', orig_row)
     
     def fetch_archived_links(self):
-        with self.db.cursor() as cursor:
-            cursor.execute("SELECT * FROM `archived_links` LIMIT 10")
-            rows = cursor.fetchall()
+        cursor = self.db.cursor()
+        cursor.execute("SELECT * FROM `archived_links` LIMIT 10")
+        rows = cursor.fetchall()
+        cursor.close()
         return rows
 
 
