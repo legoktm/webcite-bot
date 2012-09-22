@@ -30,19 +30,16 @@ import os
 import threading
 import queue
 
-import pymysql
-pymysql.install_as_MySQLdb()
-import _mysql as oursql
-
+import mysql.connector
 from webcite import errors
 
 class Database:
     
     def connect(self):
-        self.db = oursql.connect(db='u_legoktm_webcite_p',
-                            host="sql-user-l.toolserver.org",
-                            read_default_file=os.path.expanduser("~/.my.cnf"),
-                            )
+        self.db = mysql.connector.connect(database='u_legoktm_webcite_p',
+                                          host="sql-user-l.toolserver.org",
+                                          user="legoktm",
+                                          password="")
 
     def add_link(self, table, wikipage, url, author, oldid, **kwargs):
         timestamp = None
