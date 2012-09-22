@@ -32,14 +32,14 @@ import queue
 
 import mysql.connector
 from webcite import errors
-
+import pw
 class Database:
     
     def connect(self):
         self.db = mysql.connector.connect(database='u_legoktm_webcite_p',
                                           host="sql-user-l.toolserver.org",
                                           user="legoktm",
-                                          password="")
+                                          password=pw.mysql)
 
     def add_link(self, table, wikipage, url, author, oldid, **kwargs):
         timestamp = None
@@ -52,10 +52,10 @@ class Database:
             data = (id, wikipage, kwargs['archive_url'], url, author, timestamp, oldid, kwargs['added_oldid'])
         else:
             raise errors.NoTableError(table)
-        values = '(' + ', '.join(['?' for i in range(0,len(data))]) + ')'
+        values = '(' + ', '.join(['%s' for i in range(0,len(data))]) + ')'
         print(data)
         cursor = self.db.cursor()
-        cursor.execute('INSERT INTO `%s` VALUES %s' % (table, values), data)
+        cursor.execute('INSERT INTO `'+table+'` VALUES '+values, data)
         cursor.commit()
         cursor.close()
     
@@ -72,7 +72,7 @@ class Database:
         self.delete_from_table('new_links', orig_row)
     def delete_from_table(self, table, orig_row):
         cursor = self.db.cursor()
-        cursor.execute("DELETE FROM `%s` WHERE `id` = ?" % table, (orig_row[0],))
+        cursor.execute("DELETE FROM `"+table+"` WHERE `id` = %s", (orig_row[0],))
         cursor.commit()
         cursor.close()
 
