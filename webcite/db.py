@@ -56,7 +56,7 @@ class Database:
         print(data)
         cursor = self.db.cursor()
         cursor.execute('INSERT INTO `'+table+'` VALUES '+values, data)
-        cursor.commit()
+        self.db.commit()
         cursor.close()
     
     def fetch_ready_links(self):
@@ -73,7 +73,7 @@ class Database:
     def delete_from_table(self, table, orig_row):
         cursor = self.db.cursor()
         cursor.execute("DELETE FROM `"+table+"` WHERE `id` = %s", (orig_row[0],))
-        cursor.commit()
+        self.db.commit()
         cursor.close()
 
 
