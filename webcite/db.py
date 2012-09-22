@@ -42,8 +42,6 @@ class Database:
         self.db = oursql.connect(db='u_legoktm_webcite_p',
                             host="sql-user-l.toolserver.org",
                             read_default_file=os.path.expanduser("~/.my.cnf"),
-                            charset=None,
-                            use_unicode=False
                             )
 
     def add_link(self, table, wikipage, url, author, oldid, **kwargs):
