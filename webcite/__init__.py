@@ -90,19 +90,15 @@ class ArchiveThread(threading.Thread):
             print('fetch_ready_links()')
             fetch = self.Database.fetch_ready_links()
             for row in fetch:
-                print(row)
                 url = row[2]
                 article = row[1]
                 if self.url_in_article(article, url):
-                    print('Yippe! The url is still in %s' % article)
                     archive_url = self.archive_url(url)
                     if archive_url:
                         self.Database.move_archived_links(row, archive_url)
                     else:
-                        print('Failed to archive %s' % article)
                         self.Database.delete_from_new_links(row,removed=True)
                 else:
-                    print('Oh noes. Url is no longer in %s' % article)
                     self.Database.delete_from_new_links(row,removed=True)
             if not fetch:
                 print('No read_link rows found, sleeping')
