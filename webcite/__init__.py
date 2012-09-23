@@ -140,7 +140,9 @@ class WikiBot(threading.Thread):
         text = page.content
         new_text = bot.add_template(text, url, archive_url)
         if new_text:
+            print("SKYNET MODE: Will edit %s" % article)
             page.edit(new_text, 'BOT: adding webcitation.org link to %s' % url, minor=True, bot=True)
+            print("WORLD TAKEN OVER: %s edited." % article)
             #TODO: Implement page.latest_revision
             page.load() #force it to load new info
             #new_oldid = page.latestRevision() #pywikibot
@@ -148,6 +150,7 @@ class WikiBot(threading.Thread):
             new_oldid = 1
             self.Database.move_processed_links(data, new_oldid, archive_url)
         else:
+            print("SKYNET SHUTDOWN: Will not edit %s" % article)
             self.report_error(article, url, archive_url)
             self.Database.move_processed_links(data, 0, archive_url)
 
