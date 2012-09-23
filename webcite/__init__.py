@@ -145,7 +145,7 @@ class WikiBot(threading.Thread):
             page.load() #force it to load new info
             #new_oldid = page.latestRevision() #pywikibot
             #new_oldid = page.latest_revision #ceterach
-            new_oldid = 00001
+            new_oldid = 1
             self.Database.move_processed_links(data, new_oldid, archive_url)
         else:
             self.report_error(article, url, archive_url)
