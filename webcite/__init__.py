@@ -157,7 +157,7 @@ class WikiBot(threading.Thread):
             fetch = self.Database.fetch_archived_links()
             for row in fetch:
                 print(row)
-                self.add_link(data)
+                self.add_link(row)
             if not fetch:
                 print('No archived_links found, sleeping')
                 time.sleep(300) #let the table fill up again
