@@ -23,6 +23,7 @@ IN THE SOFTWARE.
 
 import threading
 import time
+import requests
 
 import ceterach
 #import pywikibot
@@ -66,6 +67,10 @@ class ArchiveThread(threading.Thread):
         return citationdotorg.archive_url(url)
 
     def url_in_article(self, article, url):
+        #verify the url actually exists and we can access it
+        r = requests.get(url, headers=citationdotorg.FIREFOX_HEADERS)
+        if r.status_code != 200:
+            return False
         #pg = pywikibot.Page(self.Site, article)
         pg = self.api.page(article)
         url = url.strip()
@@ -89,8 +94,8 @@ class ArchiveThread(threading.Thread):
             fetch = self.Database.fetch_ready_links()
             for row in fetch:
                 print(row)
-                url = row[1]
-                article = row[0]
+                url = row[2]
+                article = row[1]
                 if self.url_in_article(article, url):
                     print('Yippe! The url is still in %s' % article)
                     archive_url = self.archive_url(url)
