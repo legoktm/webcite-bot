@@ -52,6 +52,7 @@ def calculate_date(delay=None):
 
 def add_template(wikitext, url, archive_url):
     orig = str(wikitext)
+    wikitext = mwparserfromhell.parse(wikitext)
     for template in wikitext.filter_templates():
         lower = template.name.lower()
         if lower in CITE_TEMPLATES:
