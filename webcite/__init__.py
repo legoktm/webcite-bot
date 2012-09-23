@@ -68,9 +68,6 @@ class ArchiveThread(threading.Thread):
 
     def url_in_article(self, article, url):
         #verify the url actually exists and we can access it
-        r = requests.get(url, headers=citationdotorg.FIREFOX_HEADERS)
-        if r.status_code != 200:
-            return False
         #pg = pywikibot.Page(self.Site, article)
         pg = self.api.page(article)
         url = url.strip()
