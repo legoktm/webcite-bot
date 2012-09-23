@@ -32,7 +32,7 @@ from io import StringIO
 from lxml import etree
 from bs4 import BeautifulSoup
 
-from webcite import errors
+#from webcite import errors
 
 #global configuation settings
 WEBCITE_URL = 'http://www.webcitation.org/archive'
@@ -62,14 +62,12 @@ def archive_url(url):
     r = requests.get(WEBCITE_URL, params=d, headers=BOT_HEADERS)
     if r.status_code != 200:
         raise errors.ArchivingFailed(url)
-    obj = StringIO(str(r.text))
-    data = {}
+    soup = BeautifulSoup(r.text)
     try:
-        for event, element in etree.iterparse(obj):
-            data[element.tag] = element.text
+        return soup.archiverequest.resultset.webcite_url.string
     except:
-        print(r.text)
-    return data
+        return None
+
 
 if __name__ == "__main__":
     d=archive_url('en.wikipedia.org')
