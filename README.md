@@ -8,12 +8,12 @@ Implementation
 * An IRC bot sits in [#wikipedia-en-spam](irc://irc.freenode.net/#wikipedia-en-spam) (webcite/irc.py)
 * Stores new links in `new_links` (webcite/db.py)
 * Verifies that the link still exists after 48 hours (webcite/bot.py)
-* Archives the link with webcitation (webcite/citationdotorg.py)
+* Archives the link with webcitation.org (webcite/citationdotorg.py)
 * Updates the article page with a link to the archive (webcite/bot.py)
 
 Dependencies
 ---------
-* Pywikipediabot - [Legoktm's fork](https://github.com/legoktm/pywikipedia-rewrite)
+* Ceterach - by [Riamse](https://github.com/Riamse)
 * mwparserfromhell - [Github repo](https://github.com/earwig/mwparserfromhell)
 * Requests - [Homepage](http://docs.python-requests.org/en/latest/index.html)
 * lxml - [Homepage](http://lxml.de/)
