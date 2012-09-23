@@ -51,7 +51,7 @@ def calculate_date(delay=None):
 
 
 def add_template(wikitext, url, archive_url):
-    orig = unicode(wikitext)
+    orig = str(wikitext)
     for template in wikitext.filter_templates():
         lower = template.name.lower()
         if lower in CITE_TEMPLATES:
@@ -70,7 +70,7 @@ def add_template(wikitext, url, archive_url):
     #not in a cite web template :(
     
     #look for [url title]
-    match = re.search('\[\w?%s\w?(.*?)\]' % url, unicode(wikitext), re.IGNORECASE)
+    match = re.search('\[\w?%s\w?(.*?)\]' % url, str(wikitext), re.IGNORECASE)
     if match:
         cite = CITE_WEB_TEMPLATE % (
             url, match.group(1).strip(), archive_url, calculate_date())
@@ -110,10 +110,10 @@ def modify_all_of_page(page):
         if not text:
             print('ERROR')
         text = mwparserfromhell.parse(text)
-        pywikibot.showDiff(orig, unicode(text))
+        #pywikibot.showDiff(orig, str(text))
         time.sleep(5)
     print('-----------------------')
-    pywikibot.showDiff(orig, str(text))
+    #pywikibot.showDiff(orig, str(text))
     page.put(str(text), 'bot: manual testing by op')
 
 
