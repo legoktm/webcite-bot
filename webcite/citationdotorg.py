@@ -64,7 +64,7 @@ def archive_url(url):
         raise errors.ArchivingFailed(url)
     soup = BeautifulSoup(r.text)
     try:
-        return soup.archiverequest.resultset.webcite_url.string
+        return str(soup.archiverequest.resultset.webcite_url.string)
     except:
         return None
 
