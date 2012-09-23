@@ -21,4 +21,5 @@ Dependencies
 
 Thanks
 ---------
-* [rmdashrf](https://github.com/rmdashrf)
+* [rmdashrf](https://github.com/rmdashrf) for assistance with MySQL and other matters
+* [nosklo](http://stackoverflow.com/questions/827557/how-do-you-validate-a-url-with-a-regular-expression-in-python) for an amazing URL matching regex

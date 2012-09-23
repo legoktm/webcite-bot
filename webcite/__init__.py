@@ -32,6 +32,7 @@ from webcite import errors
 from webcite import db
 from webcite import bot
 from webcite import citationdotorg
+from webcite import regex
 
 
 api = ceterach.apir.MediaWiki("http://en.wikipedia.org/w/api.php")
@@ -42,19 +43,20 @@ class IRCThread(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         self.ircbot = irc.IRCBot()
-    
+
     def run(self):
         self.ircbot.start()
 
 class ArchiveThread(threading.Thread):
     def __init__(self, api):
         threading.Thread.__init__(self)
+        print('Init: ArchiveThread')
         self.Database = db.Database()
         self.Database.connect()
         self.time = 0
         #self.Site = pywikibot.Site()
         self.api = api
-    
+
     def archive_url(self, url):
         """Implements a 5 second time delay"""
         delay = time.time() - self.time
@@ -62,40 +64,51 @@ class ArchiveThread(threading.Thread):
             time.sleep(5-delay)
         self.time = time.time()
         return citationdotorg.archive_url(url)
-    
+
     def url_in_article(self, article, url):
         #pg = pywikibot.Page(self.Site, article)
         pg = self.api.page(article)
+        url = url.strip()
         if not pg.exists:
             return False
         while pg.is_redirect:
             pg = pg.redirect_target
-        links = list(pg.extlinks())
+        links = list(pg.ext_links())
         if url in links:
             return True
         text = pg.content
-        return url.lower().strip() in text.lower()
+        if url.lower() in text.lower():
+            return True
+        urls = [match.group(0) for match in regex.MATCH_URL.finditer(text)]
+        return url in urls
 
-    
+
     def run(self):
         while True:
+            print('fetch_ready_links()')
             fetch = self.Database.fetch_ready_links()
             for row in fetch:
+                print(row)
                 url = row[1]
                 article = row[0]
                 if self.url_in_article(article, url):
+                    print('Yippe! The url is still in %s' % article)
                     archive_url = self.archive_url(url)
                     self.Database.move_archived_links(row, archive_url)
                 else:
-                    self.Database.delete_from_new_links(row)
+                    print('Oh noes. Url is no longer in %s' % article)
+                    self.Database.delete_from_new_links(row,removed=True)
             if not fetch:
+                print('No read_link rows found, sleeping')
                 time.sleep(300) #let the table fill up again
 
 class WikiBot(threading.Thread):
-    
+
     def __init__(self, api):
         threading.Thread.__init__(self)
+        print('Init: WikiBot')
         self.Database = db.Database()
+        self.Database.connect()
         #self.Site = pywikibot.Site()
         #self.error_page = pywikibot.Page(self.Site, 'User:Legobot/WebCite Errors')
         self.api = api
@@ -110,8 +123,9 @@ class WikiBot(threading.Thread):
         new = '* [[:%s]] -- [%s Original], [%s Archive]. ~~~~~' % (article, url, archive_url)
         text = old + '\n' + new
         self.error_page.edit(text, 'BOT: Logging error',minor=True,bot=True)
-    
+
     def add_link(self, data):
+        print(data)
         article = data[1]
         url = data[3]
         archive_url = data[2]
@@ -130,25 +144,31 @@ class WikiBot(threading.Thread):
         else:
             self.report_error(article, url, archive_url)
             self.Database.move_processed_links(data, 0)
-    
+
     def run(self):
         while True:
+            print('fetch_archived_links')
             fetch = self.Database.fetch_archived_links()
             for row in fetch:
+                print(row)
                 self.add_link(data)
             if not fetch:
+                print('No archived_links found, sleeping')
                 time.sleep(300) #let the table fill up again
 
 def main():
+    print('Started IRC')
     ircthread = IRCThread()
     ircthread.setDaemon(True)
     ircthread.start()
-    #archivethread = ArchiveThread(api)
-    #archivethread.setDaemon(True)
-    #archivethread.start()
-    #wikibotthread = WikiBot(api)
-    #wikibotthread.setDaemon(True)
-    #wikibotthread.start()
+    print('Starting ArchiveThread')
+    archivethread = ArchiveThread(api)
+    archivethread.setDaemon(True)
+    archivethread.start()
+    print('Starting WikiBot')
+    wikibotthread = WikiBot(api)
+    wikibotthread.setDaemon(True)
+    wikibotthread.start()
     ircthread.join()
-    #archivethread.join()
-    #wikibotthread.join()
+    archivethread.join()
+    wikibotthread.join()
