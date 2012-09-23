@@ -36,9 +36,9 @@ import pw
 class Database:
     
     def connect(self):
-        self.db = mysql.connector.connect(database='u_legoktm_webcite_p',
+        self.db = mysql.connector.connect(database='u_sigma_webcite_p',
                                           host="sql-user-l.toolserver.org",
-                                          user="legoktm",
+                                          user="sigma",
                                           password=pw.mysql)
 
     def add_link(self, table, wikipage, url, author, oldid, **kwargs):

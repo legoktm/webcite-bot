@@ -35,7 +35,7 @@ class IRCBot:
     def __init__(self):
         self.HOST = "irc.freenode.net"
         self.PORT = 6667
-        self.NICK = "Legobot"
+        self.NICK = "NotLegobot"
         self.readbuffer = ""
         self.join_channels = ['##legoktm','#wikipedia-en-spam']
         self.write_channels = ['##legoktm', 'legoktm']
