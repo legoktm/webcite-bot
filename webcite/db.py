@@ -81,7 +81,7 @@ class Database:
         self.add_link('archived_links', orig_row[1], orig_row[2], orig_row[3], orig_row[5], archive_url = archive_url)
         self.delete_from_new_links(orig_row)
     
-    def move_processed_links(self, orig_row, new_oldid):
+    def move_processed_links(self, orig_row, new_oldid, archive_url):
         self.add_link('processed_links', orig_row[1], orig_row[2], orig_row[3], orig_row[5], archive_url = archive_url, added_oldid=new_oldid)
         self.delete_from_table('archived_links', orig_row)
     

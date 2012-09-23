@@ -145,11 +145,11 @@ class WikiBot(threading.Thread):
             page.load() #force it to load new info
             #new_oldid = page.latestRevision() #pywikibot
             #new_oldid = page.latest_revision #ceterach
-            new_oldid = 00000
-            self.Database.move_processed_links(data, new_oldid)
+            new_oldid = 00001
+            self.Database.move_processed_links(data, new_oldid, archive_url)
         else:
             self.report_error(article, url, archive_url)
-            self.Database.move_processed_links(data, 0)
+            self.Database.move_processed_links(data, 0, archive_url)
 
     def run(self):
         while True:
