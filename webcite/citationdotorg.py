@@ -46,7 +46,7 @@ FIREFOX_HEADERS = {'Content-Length':'',
                       'Referer':'http://en.wikipedia.org',
                       }
 BOT_HEADERS = FIREFOX_HEADERS
-BOT_HEADERS['User-Agent'] = 'Wikipedia LegoCITEBot - enwp.org/User:Legobot'
+BOT_HEADERS['User-Agent'] = 'Wikipedia Archive Bot - enwp.org/User:Lowercase_sigmabot_III'
 def get_title(url):
     r = requests.get(url, headers=FIREFOX_HEADERS) #sites may reject custom headers
     if r.status_code != 200:
