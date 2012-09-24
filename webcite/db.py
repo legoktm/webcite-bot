@@ -82,7 +82,9 @@ class Database:
         self.delete_from_new_links(orig_row)
     
     def move_processed_links(self, orig_row, new_oldid, archive_url):
-        self.add_link('processed_links', orig_row[1], orig_row[2], orig_row[3], orig_row[5], archive_url = archive_url, added_oldid=new_oldid)
+        #orig_row = (id, wikipage, kwargs['archive_url'], url, author, timestamp, oldid)
+        #should be = (table, wikipage, url, author, oldid, **kwargs)
+        self.add_link('processed_links', orig_row[1], orig_row[3], orig_row[4], orig_row[5], archive_url = archive_url, added_oldid=new_oldid)
         self.delete_from_table('archived_links', orig_row)
     
     def fetch_archived_links(self):
