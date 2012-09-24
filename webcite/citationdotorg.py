@@ -32,11 +32,11 @@ from io import StringIO
 from lxml import etree
 from bs4 import BeautifulSoup
 
-#from webcite import errors
+import pw
 
 #global configuation settings
 WEBCITE_URL = 'http://www.webcitation.org/archive'
-DEFAULT_PARAMETERS = {'email':'legoktm.wikipedia@gmail.com','returnxml':'true'}
+DEFAULT_PARAMETERS = {'email':pw.email,'returnxml':'true'}
 FIREFOX_HEADERS = {'Content-Length':'',
                       'Accept-Language':'en-us,en;q=0.5',
                       'Accept-Encoding':'gzip, deflate',
