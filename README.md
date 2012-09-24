@@ -23,3 +23,9 @@ Thanks
 ---------
 * [rmdashrf](https://github.com/rmdashrf) for assistance with MySQL and other matters
 * [nosklo](http://stackoverflow.com/questions/827557/how-do-you-validate-a-url-with-a-regular-expression-in-python) for an amazing URL matching regex
+
+Branches
+---------
+* ```master``` - current development branch
+* ```python27``` - Using Pywikibot/Python2.7 syntax. Contains many bugs fixed in ```master```
+* ```py3k``` - old transition branch, outdated
