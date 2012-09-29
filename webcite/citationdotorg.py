@@ -49,7 +49,7 @@ BOT_HEADERS = FIREFOX_HEADERS
 BOT_HEADERS['User-Agent'] = 'Wikipedia Archive Bot - enwp.org/User:Lowercase_sigmabot_III'
 def get_title(url):
     r = requests.get(url, headers=FIREFOX_HEADERS) #sites may reject custom headers
-    if r.status_code != 200:
+    if r.status_code != requests.codes.ok:
         return None
     soup = BeautifulSoup(r.text)
     title = soup.title.string.strip()
@@ -60,7 +60,7 @@ def archive_url(url):
     d = DEFAULT_PARAMETERS
     d['url'] = url
     r = requests.get(WEBCITE_URL, params=d, headers=BOT_HEADERS)
-    if r.status_code != 200:
+    if r.status_code != requests.codes.ok:
         raise errors.ArchivingFailed(url)
     soup = BeautifulSoup(r.text)
     try:
