@@ -134,6 +134,10 @@ class WikiBot(threading.Thread):
         archive_url = data[2]
         #page = pywikibot.Page(self.site, article)
         page = self.api.page(article)
+        if not page.exists:
+            self.report_error(article, url, archive_url)
+            self.Database.move_processed_links(data, 0, archive_url)
+            return
         text = page.content
         new_text = bot.add_template(text, url, archive_url)
         if new_text:
