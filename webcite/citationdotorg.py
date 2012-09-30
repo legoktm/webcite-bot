@@ -48,7 +48,10 @@ FIREFOX_HEADERS = {'Content-Length':'',
 BOT_HEADERS = FIREFOX_HEADERS
 BOT_HEADERS['User-Agent'] = 'Wikipedia Archive Bot - enwp.org/User:Lowercase_sigmabot_III'
 def get_title(url):
-    r = requests.get(url, headers=FIREFOX_HEADERS) #sites may reject custom headers
+    try:
+        r = requests.get(url, headers=FIREFOX_HEADERS) #sites may reject custom headers
+    except: #wtf
+        return None
     if r.status_code != requests.codes.ok:
         return None
     soup = BeautifulSoup(r.text)

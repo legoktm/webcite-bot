@@ -80,6 +80,8 @@ def add_template(wikitext, url, archive_url):
     #look for [url]
     find = '[%s]' % url
     title = citationdotorg.get_title(url)
+    if not title:
+        return None #cant go any farther
     if find in wikitext:
         cite = CITE_WEB_TEMPLATE % (
             url, title, archive_url, calculate_date())
