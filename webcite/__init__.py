@@ -142,7 +142,8 @@ class WikiBot(threading.Thread):
         new_text = bot.add_template(text, url, archive_url)
         if new_text:
             print("SKYNET MODE: Will edit %s" % article)
-            page.edit(new_text, 'BOT: adding webcitation.org link to %s' % url, minor=True, bot=True)
+            result=page.edit(new_text, 'BOT: adding webcitation.org link to %s' % url, minor=True, bot=True)
+            print(result)
             print("WORLD TAKEN OVER: %s edited." % article)
             #TODO: Implement page.latest_revision
             page.load() #force it to load new info
