@@ -119,7 +119,7 @@ class WikiBot(threading.Thread):
 
 
     def report_error(self, article, url, archive_url):
-        new = '* [[:%s]] -- [%s Original], [%s Archive]. ~~~~~' % (article, url, archive_url)
+        new = '\n* [[:%s]] -- [%s Original], [%s Archive]. ~~~~~' % (article, url, archive_url)
         self.error_page.append(new, 'Logging error) (bot',minor=True,bot=True)
 
     def add_link(self, data):
