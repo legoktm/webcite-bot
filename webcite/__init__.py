@@ -38,6 +38,7 @@ from webcite import regex
 
 api = ceterach.apir.MediaWiki("http://en.wikipedia.org/w/api.php")
 api.login("Lowercase sigmabot III", ceterach.passwords.lcsb3)
+api.set_token("edit")
 
 
 class IRCThread(threading.Thread):
