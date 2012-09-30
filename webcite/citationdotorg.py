@@ -54,7 +54,11 @@ def get_title(url):
         return None
     if not r.ok:
         return None
-    soup = BeautifulSoup(r.text)
+    try:
+        soup = BeautifulSoup(r.text)
+    except TypeError:
+        print('TypeError when fetching %s' %url)
+        return None
     title = soup.title.string.strip()
     title = title.replace('|', '{{!}}')
     return title
