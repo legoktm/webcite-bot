@@ -71,7 +71,7 @@ def add_template(wikitext, url, archive_url):
     #not in a cite web template :(
     
     #look for [url title]
-    match = re.search('\[\w?%s\w?(.*?)\]' % url, str(wikitext), re.IGNORECASE)
+    match = re.search('\[\w?%s\w?(.*?)\]' % re.escape(url), str(wikitext), re.IGNORECASE)
     if match:
         cite = CITE_WEB_TEMPLATE % (
             url, match.group(1).strip(), archive_url, calculate_date())
@@ -88,7 +88,7 @@ def add_template(wikitext, url, archive_url):
         wikitext = str(wikitext).replace(find, cite)
         return wikitext
     #look for just url
-    plain_regex = '\<ref(.*?)\>\w?\[?\w?%s\w?\]?\w?\</ref\>' % url
+    plain_regex = '\<ref(.*?)\>\w?\[?\w?%s\w?\]?\w?\</ref\>' % re.escape(url)
     match = re.search(plain_regex, str(wikitext))
     if match:
         cite_t = CITE_WEB_TEMPLATE % (url, title, archive_url, calculate_date())
