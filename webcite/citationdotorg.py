@@ -52,7 +52,7 @@ def get_title(url):
         r = requests.get(url, headers=FIREFOX_HEADERS) #sites may reject custom headers
     except: #wtf
         return None
-    if r.status_code != requests.codes.ok:
+    if not r.ok:
         return None
     soup = BeautifulSoup(r.text)
     title = soup.title.string.strip()
@@ -63,8 +63,8 @@ def archive_url(url):
     d = DEFAULT_PARAMETERS
     d['url'] = url
     r = requests.get(WEBCITE_URL, params=d, headers=BOT_HEADERS)
-    if r.status_code != requests.codes.ok:
-        raise errors.ArchivingFailed(url)
+    if not r.ok:
+        return None
     soup = BeautifulSoup(r.text)
     try:
         return str(soup.archiverequest.resultset.webcite_url.string)
