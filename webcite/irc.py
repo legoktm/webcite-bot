@@ -107,7 +107,7 @@ class IRCBot:
                 self.send_to_channel("Sorry, I couldn't parse that link.", channel)
                 return
         
-        self.send_to_channel('Sorry %s, I didn\'t recognize that. Here is a list of my commands:', channel)
+        self.send_to_channel('Sorry %s, I didn\'t recognize that. Here is a list of my commands:' % line_data['sender'], channel)
         self.send_to_channel('Type !help cmd to get more info: %s' % (', '.join(self.commands)), channel)
     
     def check_new_link(self, line_data):
