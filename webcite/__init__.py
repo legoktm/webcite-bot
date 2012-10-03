@@ -143,8 +143,8 @@ class WikiBot(threading.Thread):
             #TODO: Implement page.latest_revision
             page.load() #force it to load new info
             #new_oldid = page.latestRevision() #pywikibot
-            #new_oldid = page.latest_revision #ceterach
-            new_oldid = 1
+            new_oldid = page.revid #ceterach
+            #new_oldid = 1
             self.Database.move_processed_links(data, new_oldid, archive_url)
         else:
             print("SKYNET SHUTDOWN: Will not edit %s" % article)
