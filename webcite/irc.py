@@ -32,7 +32,8 @@ import socket
 from webcite import db
             
 class IRCBot:
-    def __init__(self):
+    def __init__(self, api):
+        self.api = api
         self.HOST = "irc.freenode.net"
         self.PORT = 6667
         self.NICK = "NotLegobot"
@@ -42,7 +43,7 @@ class IRCBot:
         self.error_channel = 'legoktm'
         self.operators = ['legoktm', 'SigmaWP', 'CoalBalls']
         #COMMANDS
-        self.commands = ['!status', '!link', '!help', '!quit', '!list', '!last']
+        self.commands = ['!status', '!link', '!help', '!quit', '!list', '!last', '!count']
         self.owners = ['!quit']
         self.helptext = {'!status':'Gives current status of the bot',
                          '!link':'Provides a link to wikipedia. Usage: !link [[User:Legobot]]',
@@ -50,19 +51,20 @@ class IRCBot:
                          '!quit':'Force the bot to disconnect from the server.',
                          '!list':'Give a list of commands.',
                          '!last':'Display the info about the last link parsed from #wikipedia-en-spam',
+                         '!blist':'Blacklist a certain domain'
         }
         self.last_link = None
     
     def run_commands(self, line_data):
         if line_data['channel'] == 'Legobot':
-            line_data['channel'] = 'legoktm'
+            line_data['channel'] = line_data['sender']
         channel = line_data['channel']
         split = line_data['text'].split(' ')
         command = split[0][1:].strip().lower()
         text = ' '.join(split[1:])
         text = text.strip()
         if (command in self.owners) and (not line_data['authenticated']):
-            self.send_to_channel('Sorry, %s, you can\'t run that command. Please talk to legoktm for permission.' % operator,
+            self.send_to_channel('Sorry, %s, you can\'t run that command. Please talk to legoktm for permission.' % line_data['sender'],
                                  channel)
             return
         if command == '!list':
@@ -82,7 +84,7 @@ class IRCBot:
                     self.send_to_channel('Sorry, help isn\'t availible for this command. Please let legoktm know.', channel)
                     return
             else:
-                self.send_to_channel('Sorry, thats not a valid command.', channel)
+                #self.send_to_channel('Sorry, thats not a valid command.', channel)
                 return
         if command == '!quit':
             self.quit(msg=text, user=line_data['sender'])
@@ -106,45 +108,15 @@ class IRCBot:
             else:
                 self.send_to_channel("Sorry, I couldn't parse that link.", channel)
                 return
-        
+        if command == '!blist':
+            pg = self.api.page("User:Lowercase sigmabot III/Blacklist")
+            t = "\n"+text+"\n"+"#Requested on IRC by "+line_data["sender"]
+            pg.append(t, "Adding new blacklisted domain) (bot")
         self.send_to_channel('Sorry %s, I didn\'t recognize that. Here is a list of my commands:' % line_data['sender'], channel)
         self.send_to_channel('Type !help cmd to get more info: %s' % (', '.join(self.commands)), channel)
     
     def check_new_link(self, line_data):
-        #TODO: Move this into a webcite.db queue class
-        if not line_data['sender'].startswith('LiWa3'):
-            #not a new link
-            return
-        text = line_data['text']
-        start = text.find('[[en:')
-        end = text.find(']]')
-        article_name = text[start+5:end]
-        if article_name.startswith('User:'):
-            #skip articles not in mainspace
-            return
-        oldid_key = text.find('?diff=') + 6
-        if oldid_key == (-1 + 6):
-            oldid_key = text.find('?oldid=') + 7
-        oldid = text[oldid_key:oldid_key+9]
-        user_key = text.find('[[en:User') + 10
-        user_end_key = user_key + text[user_key:].find(']]')
-        user = text[user_key:user_end_key]
-        link_part = text[user_end_key:]
-        link_start = link_part.find('http')
-        if link_start == -1:
-            link_start = link_part.find('www')
-            if link_start == -1:
-                #wtf
-                return
-        link_end = link_part.find(' (')
-        link = link_part[link_start:link_end]
-        if link.endswith('\x03'):
-            link = link[:-1]
-        
-        
-        self.last_link ={'user':user, 'article_name':article_name, 'oldid':oldid, 'link':link}
-        print(self.last_link)
-        db.NEWLINKSQUEUE.put(self.last_link)
+        db.NEWLINKSQUEUE.put(line_data)
     
     def send(self, msg):
         line = msg+'\r\n'
@@ -191,7 +163,7 @@ class IRCBot:
         if line[1] in ["372", "376", "375"]:
             self.welcomed = True
             return
-        line_data = {}
+        line_data = dict()
         line_data['sender'] = line[0][1:]
         line_data['authenticated'] = False
         for owner in self.owners:

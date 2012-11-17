@@ -104,11 +104,45 @@ class NewLinksThread(threading.Thread):
         self.Database = Database()
         self.Database.connect()
     
-    def parse(self, data):
+    def parse(self, line_data):
         #data ={'user':user, 'article_name':article_name, 'oldid':oldid, 'link':link}
+        data = self.raw_parse(line_data)
         table = 'new_links'
         self.Database.add_link(table, data['article_name'], data['link'], data['user'], data['oldid'])
-    
+
+    def raw_parse(self, line_data):
+        if not line_data['sender'].startswith('LiWa3'):
+            #not a new link
+            return
+        text = line_data['text']
+        start = text.find('[[en:')
+        end = text.find(']]')
+        article_name = text[start+5:end]
+        if article_name.startswith('User:'):
+            #skip articles not in mainspace
+            return
+        oldid_key = text.find('?diff=') + 6
+        if oldid_key == (-1 + 6):
+            oldid_key = text.find('?oldid=') + 7
+        oldid = text[oldid_key:oldid_key+9]
+        user_key = text.find('[[en:User') + 10
+        user_end_key = user_key + text[user_key:].find(']]')
+        user = text[user_key:user_end_key]
+        link_part = text[user_end_key:]
+        link_start = link_part.find('http')
+        if link_start == -1:
+            link_start = link_part.find('www')
+            if link_start == -1:
+                #wtf
+                return
+        link_end = link_part.find(' (')
+        link = link_part[link_start:link_end]
+        if link.endswith('\x03'):
+            link = link[:-1]
+
+        return {'user':user, 'article_name':article_name, 'oldid':oldid, 'link':link}
+
+
     def run(self):
         while True:
             data = self.queue.get()
