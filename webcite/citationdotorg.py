@@ -26,7 +26,7 @@ Part of a webcitation.org bot
 This portion interacts with webcitation.org in querying
 and analyzing data.
 """
-
+import re
 import requests
 from io import StringIO
 from lxml import etree
@@ -61,6 +61,8 @@ def get_title(url):
         return None
     title = soup.title.string.strip()
     title = title.replace('|', '{{!}}')
+    title = title.replace('\n', '')
+    title = re.sub('\s+',' ',title)
     return title
 
 def archive_url(url):
