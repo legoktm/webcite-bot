@@ -120,6 +120,14 @@ def modify_all_of_page(page):
     page.put(str(text), 'bot: manual testing by op')
 
 
+def fetch_blacklist(api):
+    pg = api.page("User:Lowercase sigmabot III/Blacklist")
+    blist = list()
+    for line in pg.content:
+        if not line.strip().startswith('#'):
+            blist.append(line.strip())
+    return blist
+
 if __name__ == "__main__":
     #modify_all_of_page(pywikibot.Page(pywikibot.Site(), 'User:Legoktm/Sandbox'))
     pass
