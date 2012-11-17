@@ -38,13 +38,13 @@ import pw
 WEBCITE_URL = 'http://www.webcitation.org/archive'
 DEFAULT_PARAMETERS = {'email':pw.email,'returnxml':'true'}
 FIREFOX_HEADERS = {'Content-Length':'',
-                      'Accept-Language':'en-us,en;q=0.5',
-                      'Accept-Encoding':'gzip, deflate',
-                      'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-                      'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:15.0) Gecko/20100101 Firefox/15.0',
-                      'Connection':'keep-alive',
-                      'Referer':'http://en.wikipedia.org',
-                      }
+                   'Accept-Language':'en-us,en;q=0.5',
+                   'Accept-Encoding':'gzip, deflate',
+                   'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                   'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:15.0) Gecko/20100101 Firefox/15.0',
+                   'Connection':'keep-alive',
+                   'Referrer':'http://en.wikipedia.org',
+                  }
 BOT_HEADERS = FIREFOX_HEADERS
 BOT_HEADERS['User-Agent'] = 'Wikipedia Archive Bot - enwp.org/User:Lowercase_sigmabot_III'
 def get_title(url):
