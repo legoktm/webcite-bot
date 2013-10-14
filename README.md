@@ -1,4 +1,4 @@
-A [webcitaton.org](http://webcitation.org) bot for [en.wikipedia.org](http://en.wikipedia.org)
+A [webcitation.org](http://webcitation.org) bot for [en.wikipedia.org](http://en.wikipedia.org)
 ===================
 * Written by [Legoktm](http://en.wikipedia.org/wiki/User:Legoktm)
 * Source code released under the MIT License
